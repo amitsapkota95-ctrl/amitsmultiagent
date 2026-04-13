@@ -1,65 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Antigravity — Zero-Touch AI Orchestration</title>
-  <meta name="description" content="Antigravity: a frictionless multi-agent AI workspace. Describe any task and let a team of AI agents architect and build it for you." />
+  <meta name="description"
+    content="Antigravity: a frictionless multi-agent AI workspace. Describe any task and let a team of AI agents architect and build it for you." />
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
-    rel="stylesheet"
-  />
+    rel="stylesheet" />
 
   <style>
     /* ─── Design tokens ────────────────────────────────────────────────── */
     :root {
-      --bg:            #05060f;
-      --surface:       #0d0f1e;
-      --surface-2:     #141626;
-      --border:        rgba(255,255,255,0.07);
-      --border-glow:   rgba(99,102,241,0.35);
+      --bg: #05060f;
+      --surface: #0d0f1e;
+      --surface-2: #141626;
+      --border: rgba(255, 255, 255, 0.07);
+      --border-glow: rgba(99, 102, 241, 0.35);
 
-      --text-primary:  #f0f0ff;
-      --text-secondary:#8b8fb5;
-      --text-muted:    #4a4d6b;
+      --text-primary: #f0f0ff;
+      --text-secondary: #8b8fb5;
+      --text-muted: #4a4d6b;
 
-      --accent:        #6366f1;
-      --accent-light:  #818cf8;
-      --accent-dim:    rgba(99,102,241,0.15);
-      --accent-glow:   rgba(99,102,241,0.4);
+      --accent: #6366f1;
+      --accent-light: #818cf8;
+      --accent-dim: rgba(99, 102, 241, 0.15);
+      --accent-glow: rgba(99, 102, 241, 0.4);
 
-      --green:         #34d399;
-      --red:           #f87171;
-      --yellow:        #fbbf24;
+      --green: #34d399;
+      --red: #f87171;
+      --yellow: #fbbf24;
 
-      --radius-sm:     8px;
-      --radius:        14px;
-      --radius-lg:     20px;
+      --radius-sm: 8px;
+      --radius: 14px;
+      --radius-lg: 20px;
 
-      --font-sans:     'Inter', system-ui, sans-serif;
-      --font-mono:     'JetBrains Mono', 'Fira Code', monospace;
+      --font-sans: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
-      --transition:    0.2s cubic-bezier(0.4,0,0.2,1);
+      --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     /* ─── Reset & Base ─────────────────────────────────────────────────── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-    html { scroll-behavior: smooth; }
+    html {
+      scroll-behavior: smooth;
+    }
 
     body {
       font-family: var(--font-sans);
-      background:  var(--bg);
-      color:       var(--text-primary);
-      min-height:  100vh;
-      display:     flex;
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
       flex-direction: column;
       align-items: center;
-      overflow-x:  hidden;
+      overflow-x: hidden;
     }
 
     /* ─── Ambient background orbs ──────────────────────────────────────── */
@@ -70,6 +79,7 @@
       z-index: 0;
       overflow: hidden;
     }
+
     .bg-orbs::before {
       content: '';
       position: absolute;
@@ -78,9 +88,10 @@
       width: 60vw;
       height: 60vw;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, transparent 70%);
       animation: float-a 18s ease-in-out infinite alternate;
     }
+
     .bg-orbs::after {
       content: '';
       position: absolute;
@@ -89,11 +100,29 @@
       width: 50vw;
       height: 50vw;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(129,140,248,0.08) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(129, 140, 248, 0.08) 0%, transparent 70%);
       animation: float-b 22s ease-in-out infinite alternate;
     }
-    @keyframes float-a { from { transform: translate(0,0) scale(1); } to { transform: translate(4vw,3vh) scale(1.08); } }
-    @keyframes float-b { from { transform: translate(0,0) scale(1); } to { transform: translate(-3vw,-4vh) scale(1.06); } }
+
+    @keyframes float-a {
+      from {
+        transform: translate(0, 0) scale(1);
+      }
+
+      to {
+        transform: translate(4vw, 3vh) scale(1.08);
+      }
+    }
+
+    @keyframes float-b {
+      from {
+        transform: translate(0, 0) scale(1);
+      }
+
+      to {
+        transform: translate(-3vw, -4vh) scale(1.06);
+      }
+    }
 
     /* ─── Layout ───────────────────────────────────────────────────────── */
     .page-wrapper {
@@ -130,15 +159,27 @@
       text-transform: uppercase;
       color: var(--accent-light);
     }
+
     .logo-badge .dot {
-      width: 6px; height: 6px;
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
       background: var(--accent-light);
       animation: pulse-dot 2s ease-in-out infinite;
     }
+
     @keyframes pulse-dot {
-      0%,100% { opacity: 1; transform: scale(1); }
-      50%      { opacity: 0.4; transform: scale(0.8); }
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.4;
+        transform: scale(0.8);
+      }
     }
 
     h1 {
@@ -166,6 +207,7 @@
       flex-wrap: wrap;
       justify-content: center;
     }
+
     .agent-badge {
       display: flex;
       align-items: center;
@@ -178,7 +220,10 @@
       color: var(--text-secondary);
       font-family: var(--font-mono);
     }
-    .agent-badge .icon { font-size: 14px; }
+
+    .agent-badge .icon {
+      font-size: 14px;
+    }
 
     /* ─── Main card ─────────────────────────────────────────────────────── */
     .main-card {
@@ -190,18 +235,19 @@
       flex-direction: column;
       gap: 20px;
       box-shadow:
-        0 4px 6px rgba(0,0,0,0.3),
-        0 20px 64px rgba(0,0,0,0.4),
-        inset 0 1px 0 rgba(255,255,255,0.04);
+        0 4px 6px rgba(0, 0, 0, 0.3),
+        0 20px 64px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
       transition: border-color var(--transition);
     }
+
     .main-card:focus-within {
       border-color: var(--border-glow);
       box-shadow:
-        0 4px 6px rgba(0,0,0,0.3),
-        0 20px 64px rgba(0,0,0,0.4),
+        0 4px 6px rgba(0, 0, 0, 0.3),
+        0 20px 64px rgba(0, 0, 0, 0.4),
         0 0 0 1px var(--accent-glow),
-        inset 0 1px 0 rgba(255,255,255,0.04);
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
     }
 
     .card-label {
@@ -229,12 +275,20 @@
       outline: none;
       transition: border-color var(--transition), box-shadow var(--transition);
     }
-    #prompt-input::placeholder { color: var(--text-muted); }
+
+    #prompt-input::placeholder {
+      color: var(--text-muted);
+    }
+
     #prompt-input:focus {
       border-color: var(--border-glow);
-      box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
     }
-    #prompt-input:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    #prompt-input:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
 
     /* ─── Submit button ──────────────────────────────────────────────────── */
     #submit-btn {
@@ -257,34 +311,45 @@
         transform var(--transition),
         box-shadow var(--transition),
         opacity var(--transition);
-      box-shadow: 0 4px 20px rgba(99,102,241,0.4);
+      box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
     }
+
     #submit-btn:hover:not(:disabled) {
       background: var(--accent-light);
       transform: translateY(-1px);
-      box-shadow: 0 8px 28px rgba(99,102,241,0.5);
+      box-shadow: 0 8px 28px rgba(99, 102, 241, 0.5);
     }
+
     #submit-btn:active:not(:disabled) {
       transform: translateY(0);
     }
+
     #submit-btn:disabled {
       opacity: 0.55;
       cursor: not-allowed;
       transform: none;
     }
 
-    .btn-icon { font-size: 16px; }
+    .btn-icon {
+      font-size: 16px;
+    }
 
     /* ─── Loading state ──────────────────────────────────────────────────── */
     .spinner {
       display: none;
-      width: 16px; height: 16px;
-      border: 2px solid rgba(255,255,255,0.3);
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
       border-top-color: #fff;
       border-radius: 50%;
       animation: spin 0.7s linear infinite;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
 
     /* ─── Status bar ─────────────────────────────────────────────────────── */
     #status-bar {
@@ -299,7 +364,10 @@
       color: var(--accent-light);
       animation: fade-in 0.3s ease;
     }
-    #status-bar.visible { display: flex; }
+
+    #status-bar.visible {
+      display: flex;
+    }
 
     .agent-steps {
       display: flex;
@@ -307,35 +375,62 @@
       align-items: center;
       flex-wrap: wrap;
     }
+
     .step {
       font-size: 12px;
       font-weight: 500;
       padding: 3px 9px;
       border-radius: 999px;
-      background: rgba(99,102,241,0.2);
+      background: rgba(99, 102, 241, 0.2);
       color: var(--accent-light);
       border: 1px solid var(--border-glow);
       transition: all 0.3s ease;
     }
-    .step.active  { background: var(--accent); color: #fff; border-color: transparent; }
-    .step.done    { background: rgba(52,211,153,0.2); color: var(--green); border-color: rgba(52,211,153,0.3); }
+
+    .step.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: transparent;
+    }
+
+    .step.done {
+      background: rgba(52, 211, 153, 0.2);
+      color: var(--green);
+      border-color: rgba(52, 211, 153, 0.3);
+    }
 
     /* ─── Result section ─────────────────────────────────────────────────── */
     #result-section {
       display: none;
       flex-direction: column;
       gap: 16px;
-      animation: slide-up 0.4s cubic-bezier(0.4,0,0.2,1);
+      animation: slide-up 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    #result-section.visible { display: flex; }
+
+    #result-section.visible {
+      display: flex;
+    }
 
     @keyframes slide-up {
-      from { opacity: 0; transform: translateY(16px); }
-      to   { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
+
     @keyframes fade-in {
-      from { opacity: 0; }
-      to   { opacity: 1; }
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
     }
 
     .result-header {
@@ -353,7 +448,11 @@
       align-items: center;
       gap: 8px;
     }
-    .result-title .check { color: var(--green); font-size: 16px; }
+
+    .result-title .check {
+      color: var(--green);
+      font-size: 16px;
+    }
 
     .copy-btn {
       padding: 5px 12px;
@@ -367,7 +466,11 @@
       cursor: pointer;
       transition: all var(--transition);
     }
-    .copy-btn:hover { border-color: var(--border-glow); color: var(--text-primary); }
+
+    .copy-btn:hover {
+      border-color: var(--border-glow);
+      color: var(--text-primary);
+    }
 
     /* ─── Tabs ───────────────────────────────────────────────────────────── */
     .tabs {
@@ -378,6 +481,7 @@
       border-radius: var(--radius-sm);
       padding: 4px;
     }
+
     .tab-btn {
       flex: 1;
       padding: 7px 14px;
@@ -391,12 +495,16 @@
       cursor: pointer;
       transition: all var(--transition);
     }
+
     .tab-btn.active {
       background: var(--surface);
       color: var(--text-primary);
-      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
     }
-    .tab-btn:hover:not(.active) { color: var(--text-secondary); }
+
+    .tab-btn:hover:not(.active) {
+      color: var(--text-secondary);
+    }
 
     /* ─── Output area ────────────────────────────────────────────────────── */
     .output-card {
@@ -419,12 +527,24 @@
       white-space: pre-wrap;
       word-break: break-word;
     }
-    .tab-panel.active { display: block; }
+
+    .tab-panel.active {
+      display: block;
+    }
 
     /* Scrollbar */
-    .tab-panel::-webkit-scrollbar { width: 6px; }
-    .tab-panel::-webkit-scrollbar-track { background: transparent; }
-    .tab-panel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    .tab-panel::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .tab-panel::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .tab-panel::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 3px;
+    }
 
     /* ─── Meta stats ─────────────────────────────────────────────────────── */
     #meta-stats {
@@ -432,7 +552,10 @@
       gap: 12px;
       flex-wrap: wrap;
     }
-    #meta-stats.visible { display: flex; }
+
+    #meta-stats.visible {
+      display: flex;
+    }
 
     .stat-chip {
       display: flex;
@@ -446,21 +569,27 @@
       color: var(--text-secondary);
       font-family: var(--font-mono);
     }
-    .stat-chip .label { color: var(--text-muted); }
+
+    .stat-chip .label {
+      color: var(--text-muted);
+    }
 
     /* ─── Error state ────────────────────────────────────────────────────── */
     #error-box {
       display: none;
       padding: 14px 18px;
       border-radius: var(--radius);
-      background: rgba(248,113,113,0.08);
-      border: 1px solid rgba(248,113,113,0.3);
+      background: rgba(248, 113, 113, 0.08);
+      border: 1px solid rgba(248, 113, 113, 0.3);
       color: var(--red);
       font-size: 13.5px;
       line-height: 1.6;
       animation: fade-in 0.3s ease;
     }
-    #error-box.visible { display: block; }
+
+    #error-box.visible {
+      display: block;
+    }
 
     /* ─── Footer ─────────────────────────────────────────────────────────── */
     .footer {
@@ -469,15 +598,35 @@
       color: var(--text-muted);
       line-height: 1.6;
     }
-    .footer a { color: var(--text-muted); text-decoration: none; }
-    .footer a:hover { color: var(--text-secondary); }
+
+    .footer a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      color: var(--text-secondary);
+    }
 
     /* ─── Responsive ─────────────────────────────────────────────────────── */
     @media (max-width: 520px) {
-      .page-wrapper { padding: 36px 16px 60px; gap: 28px; }
-      .main-card    { padding: 20px; }
-      h1            { font-size: 2rem; }
-      #submit-btn   { align-self: stretch; justify-content: center; }
+      .page-wrapper {
+        padding: 36px 16px 60px;
+        gap: 28px;
+      }
+
+      .main-card {
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      #submit-btn {
+        align-self: stretch;
+        justify-content: center;
+      }
     }
   </style>
 </head>
@@ -518,14 +667,9 @@
     <section class="main-card" aria-label="Prompt input">
       <label class="card-label" for="prompt-input">Your Request</label>
 
-      <textarea
-        id="prompt-input"
-        name="prompt"
-        rows="6"
+      <textarea id="prompt-input" name="prompt" rows="6"
         placeholder="e.g. Build a REST API for a todo app with Express and SQLite, including CRUD endpoints and error handling…"
-        aria-label="Enter your task description"
-        spellcheck="true"
-      ></textarea>
+        aria-label="Enter your task description" spellcheck="true"></textarea>
 
       <!-- Status bar (shown while loading) -->
       <div id="status-bar" role="status" aria-live="polite">
@@ -541,11 +685,7 @@
       </div>
 
       <!-- Submit button -->
-      <button
-        id="submit-btn"
-        type="button"
-        aria-label="Submit prompt to agent team"
-      >
+      <button id="submit-btn" type="button" aria-label="Submit prompt to agent team">
         <span class="btn-icon" aria-hidden="true">✦</span>
         Run Agents
       </button>
@@ -561,49 +701,22 @@
           <span class="check" aria-hidden="true">✓</span>
           Agent Team Output
         </div>
-        <button
-          id="copy-btn"
-          class="copy-btn"
-          type="button"
-          aria-label="Copy developer output to clipboard"
-        >
+        <button id="copy-btn" class="copy-btn" type="button" aria-label="Copy developer output to clipboard">
           Copy
         </button>
       </div>
 
       <!-- Tabs -->
       <div class="tabs" role="tablist" aria-label="Output tabs">
-        <button
-          class="tab-btn active"
-          id="tab-developer"
-          role="tab"
-          aria-selected="true"
-          aria-controls="panel-developer"
-          data-panel="panel-developer"
-        >⚙️ Developer</button>
-        <button
-          class="tab-btn"
-          id="tab-architect"
-          role="tab"
-          aria-selected="false"
-          aria-controls="panel-architect"
-          data-panel="panel-architect"
-        >🏛 Architect</button>
+        <button class="tab-btn active" id="tab-developer" role="tab" aria-selected="true"
+          aria-controls="panel-developer" data-panel="panel-developer">⚙️ Developer</button>
+        <button class="tab-btn" id="tab-architect" role="tab" aria-selected="false" aria-controls="panel-architect"
+          data-panel="panel-architect">🏛 Architect</button>
       </div>
 
       <div class="output-card">
-        <div
-          id="panel-developer"
-          class="tab-panel active"
-          role="tabpanel"
-          aria-labelledby="tab-developer"
-        ></div>
-        <div
-          id="panel-architect"
-          class="tab-panel"
-          role="tabpanel"
-          aria-labelledby="tab-architect"
-        ></div>
+        <div id="panel-developer" class="tab-panel active" role="tabpanel" aria-labelledby="tab-developer"></div>
+        <div id="panel-architect" class="tab-panel" role="tabpanel" aria-labelledby="tab-architect"></div>
       </div>
 
       <!-- Meta stats -->
@@ -615,7 +728,8 @@
       Powered by
       <a href="https://cloud.google.com/vertex-ai" target="_blank" rel="noopener">Google Vertex AI</a>
       ·
-      <a href="https://www.npmjs.com/package/@jackchen_me/open-multi-agent" target="_blank" rel="noopener">open-multi-agent</a>
+      <a href="https://www.npmjs.com/package/@jackchen_me/open-multi-agent" target="_blank"
+        rel="noopener">open-multi-agent</a>
     </footer>
 
   </main>
@@ -623,22 +737,22 @@
   <script>
     // ── Configuration ────────────────────────────────────────────────────────
     // Replace with your actual Cloud Run service URL after deployment.
-    const BACKEND_URL = 'YOUR_CLOUD_RUN_URL/api/generate'
+    const BACKEND_URL = 'https://6240a8f6.codinghub.pages.dev/api/generate'
 
     // ── Element refs ─────────────────────────────────────────────────────────
-    const promptInput    = document.getElementById('prompt-input')
-    const submitBtn      = document.getElementById('submit-btn')
-    const statusBar      = document.getElementById('status-bar')
-    const spinner        = document.getElementById('spinner')
-    const stepArchitect  = document.getElementById('step-architect')
-    const stepDeveloper  = document.getElementById('step-developer')
-    const errorBox       = document.getElementById('error-box')
-    const resultSection  = document.getElementById('result-section')
+    const promptInput = document.getElementById('prompt-input')
+    const submitBtn = document.getElementById('submit-btn')
+    const statusBar = document.getElementById('status-bar')
+    const spinner = document.getElementById('spinner')
+    const stepArchitect = document.getElementById('step-architect')
+    const stepDeveloper = document.getElementById('step-developer')
+    const errorBox = document.getElementById('error-box')
+    const resultSection = document.getElementById('result-section')
     const panelDeveloper = document.getElementById('panel-developer')
     const panelArchitect = document.getElementById('panel-architect')
-    const metaStats      = document.getElementById('meta-stats')
-    const copyBtn        = document.getElementById('copy-btn')
-    const tabBtns        = document.querySelectorAll('.tab-btn')
+    const metaStats = document.getElementById('meta-stats')
+    const copyBtn = document.getElementById('copy-btn')
+    const tabBtns = document.querySelectorAll('.tab-btn')
 
     // ── Tab switching ─────────────────────────────────────────────────────────
     tabBtns.forEach(btn => {
@@ -673,7 +787,7 @@
     // ── UI state helpers ──────────────────────────────────────────────────────
     function setLoading(isLoading) {
       promptInput.disabled = isLoading
-      submitBtn.disabled   = isLoading
+      submitBtn.disabled = isLoading
       spinner.style.display = isLoading ? 'block' : 'none'
 
       if (isLoading) {
@@ -756,9 +870,9 @@
         }, 3000)
 
         const response = await fetch(BACKEND_URL, {
-          method:  'POST',
+          method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify({ prompt }),
+          body: JSON.stringify({ prompt }),
         })
 
         clearTimeout(archTimer)
@@ -792,4 +906,5 @@
     })
   </script>
 </body>
+
 </html>
