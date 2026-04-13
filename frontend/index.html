@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Antigravity — Zero-Touch AI Orchestration</title>
+  <meta name="description" content="Antigravity: a frictionless multi-agent AI workspace. Describe any task and let a team of AI agents architect and build it for you." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    /* ─── Design tokens ────────────────────────────────────────────────── */
+    :root {
+      --bg:            #05060f;
+      --surface:       #0d0f1e;
+      --surface-2:     #141626;
+      --border:        rgba(255,255,255,0.07);
+      --border-glow:   rgba(99,102,241,0.35);
+
+      --text-primary:  #f0f0ff;
+      --text-secondary:#8b8fb5;
+      --text-muted:    #4a4d6b;
+
+      --accent:        #6366f1;
+      --accent-light:  #818cf8;
+      --accent-dim:    rgba(99,102,241,0.15);
+      --accent-glow:   rgba(99,102,241,0.4);
+
+      --green:         #34d399;
+      --red:           #f87171;
+      --yellow:        #fbbf24;
+
+      --radius-sm:     8px;
+      --radius:        14px;
+      --radius-lg:     20px;
+
+      --font-sans:     'Inter', system-ui, sans-serif;
+      --font-mono:     'JetBrains Mono', 'Fira Code', monospace;
+
+      --transition:    0.2s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    /* ─── Reset & Base ─────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-sans);
+      background:  var(--bg);
+      color:       var(--text-primary);
+      min-height:  100vh;
+      display:     flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x:  hidden;
+    }
+
+    /* ─── Ambient background orbs ──────────────────────────────────────── */
+    .bg-orbs {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .bg-orbs::before {
+      content: '';
+      position: absolute;
+      top: -20%;
+      left: -10%;
+      width: 60vw;
+      height: 60vw;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%);
+      animation: float-a 18s ease-in-out infinite alternate;
+    }
+    .bg-orbs::after {
+      content: '';
+      position: absolute;
+      bottom: -15%;
+      right: -5%;
+      width: 50vw;
+      height: 50vw;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(129,140,248,0.08) 0%, transparent 70%);
+      animation: float-b 22s ease-in-out infinite alternate;
+    }
+    @keyframes float-a { from { transform: translate(0,0) scale(1); } to { transform: translate(4vw,3vh) scale(1.08); } }
+    @keyframes float-b { from { transform: translate(0,0) scale(1); } to { transform: translate(-3vw,-4vh) scale(1.06); } }
+
+    /* ─── Layout ───────────────────────────────────────────────────────── */
+    .page-wrapper {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 780px;
+      padding: 60px 24px 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+    }
+
+    /* ─── Header ───────────────────────────────────────────────────────── */
+    .header {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: var(--accent-dim);
+      border: 1px solid var(--border-glow);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent-light);
+    }
+    .logo-badge .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent-light);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50%      { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    h1 {
+      font-size: clamp(2rem, 6vw, 3.4rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      background: linear-gradient(135deg, #f0f0ff 0%, var(--accent-light) 50%, #c4b5fd 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      max-width: 460px;
+      line-height: 1.6;
+    }
+
+    /* ─── Agent team badges ─────────────────────────────────────────────── */
+    .agent-team {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .agent-badge {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 12px;
+      border-radius: var(--radius-sm);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+    }
+    .agent-badge .icon { font-size: 14px; }
+
+    /* ─── Main card ─────────────────────────────────────────────────────── */
+    .main-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      box-shadow:
+        0 4px 6px rgba(0,0,0,0.3),
+        0 20px 64px rgba(0,0,0,0.4),
+        inset 0 1px 0 rgba(255,255,255,0.04);
+      transition: border-color var(--transition);
+    }
+    .main-card:focus-within {
+      border-color: var(--border-glow);
+      box-shadow:
+        0 4px 6px rgba(0,0,0,0.3),
+        0 20px 64px rgba(0,0,0,0.4),
+        0 0 0 1px var(--accent-glow),
+        inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+
+    .card-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    /* ─── Textarea ──────────────────────────────────────────────────────── */
+    #prompt-input {
+      width: 100%;
+      min-height: 140px;
+      max-height: 380px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      line-height: 1.6;
+      padding: 16px 18px;
+      resize: vertical;
+      outline: none;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    #prompt-input::placeholder { color: var(--text-muted); }
+    #prompt-input:focus {
+      border-color: var(--border-glow);
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
+    }
+    #prompt-input:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ─── Submit button ──────────────────────────────────────────────────── */
+    #submit-btn {
+      align-self: flex-end;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 28px;
+      border-radius: var(--radius);
+      background: var(--accent);
+      color: #fff;
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      border: none;
+      cursor: pointer;
+      transition:
+        background var(--transition),
+        transform var(--transition),
+        box-shadow var(--transition),
+        opacity var(--transition);
+      box-shadow: 0 4px 20px rgba(99,102,241,0.4);
+    }
+    #submit-btn:hover:not(:disabled) {
+      background: var(--accent-light);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 28px rgba(99,102,241,0.5);
+    }
+    #submit-btn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+    #submit-btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-icon { font-size: 16px; }
+
+    /* ─── Loading state ──────────────────────────────────────────────────── */
+    .spinner {
+      display: none;
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── Status bar ─────────────────────────────────────────────────────── */
+    #status-bar {
+      display: none;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      background: var(--accent-dim);
+      border: 1px solid var(--border-glow);
+      font-size: 13px;
+      color: var(--accent-light);
+      animation: fade-in 0.3s ease;
+    }
+    #status-bar.visible { display: flex; }
+
+    .agent-steps {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .step {
+      font-size: 12px;
+      font-weight: 500;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: rgba(99,102,241,0.2);
+      color: var(--accent-light);
+      border: 1px solid var(--border-glow);
+      transition: all 0.3s ease;
+    }
+    .step.active  { background: var(--accent); color: #fff; border-color: transparent; }
+    .step.done    { background: rgba(52,211,153,0.2); color: var(--green); border-color: rgba(52,211,153,0.3); }
+
+    /* ─── Result section ─────────────────────────────────────────────────── */
+    #result-section {
+      display: none;
+      flex-direction: column;
+      gap: 16px;
+      animation: slide-up 0.4s cubic-bezier(0.4,0,0.2,1);
+    }
+    #result-section.visible { display: flex; }
+
+    @keyframes slide-up {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fade-in {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    .result-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .result-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .result-title .check { color: var(--green); font-size: 16px; }
+
+    .copy-btn {
+      padding: 5px 12px;
+      border-radius: var(--radius-sm);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .copy-btn:hover { border-color: var(--border-glow); color: var(--text-primary); }
+
+    /* ─── Tabs ───────────────────────────────────────────────────────────── */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 4px;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 7px 14px;
+      border-radius: 6px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .tab-btn.active {
+      background: var(--surface);
+      color: var(--text-primary);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    }
+    .tab-btn:hover:not(.active) { color: var(--text-secondary); }
+
+    /* ─── Output area ────────────────────────────────────────────────────── */
+    .output-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .tab-panel {
+      display: none;
+      padding: 20px;
+      min-height: 120px;
+      max-height: 480px;
+      overflow-y: auto;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--text-primary);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .tab-panel.active { display: block; }
+
+    /* Scrollbar */
+    .tab-panel::-webkit-scrollbar { width: 6px; }
+    .tab-panel::-webkit-scrollbar-track { background: transparent; }
+    .tab-panel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* ─── Meta stats ─────────────────────────────────────────────────────── */
+    #meta-stats {
+      display: none;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    #meta-stats.visible { display: flex; }
+
+    .stat-chip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: var(--radius-sm);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+    }
+    .stat-chip .label { color: var(--text-muted); }
+
+    /* ─── Error state ────────────────────────────────────────────────────── */
+    #error-box {
+      display: none;
+      padding: 14px 18px;
+      border-radius: var(--radius);
+      background: rgba(248,113,113,0.08);
+      border: 1px solid rgba(248,113,113,0.3);
+      color: var(--red);
+      font-size: 13.5px;
+      line-height: 1.6;
+      animation: fade-in 0.3s ease;
+    }
+    #error-box.visible { display: block; }
+
+    /* ─── Footer ─────────────────────────────────────────────────────────── */
+    .footer {
+      text-align: center;
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+    .footer a { color: var(--text-muted); text-decoration: none; }
+    .footer a:hover { color: var(--text-secondary); }
+
+    /* ─── Responsive ─────────────────────────────────────────────────────── */
+    @media (max-width: 520px) {
+      .page-wrapper { padding: 36px 16px 60px; gap: 28px; }
+      .main-card    { padding: 20px; }
+      h1            { font-size: 2rem; }
+      #submit-btn   { align-self: stretch; justify-content: center; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Ambient background -->
+  <div class="bg-orbs" aria-hidden="true"></div>
+
+  <main class="page-wrapper" role="main">
+
+    <!-- ── Header ───────────────────────────────────────────────────────── -->
+    <header class="header">
+      <div class="logo-badge" role="img" aria-label="Antigravity — Live">
+        <span class="dot" aria-hidden="true"></span>
+        Antigravity
+      </div>
+
+      <h1>Zero-Touch AI&nbsp;Orchestration</h1>
+
+      <p class="subtitle">
+        Describe any task. A two-agent team — an architect and a developer —
+        will plan, build, and deliver it for you.
+      </p>
+
+      <div class="agent-team" aria-label="Agent team">
+        <div class="agent-badge">
+          <span class="icon" aria-hidden="true">🏛</span>
+          Architect · gemini-2.5-pro
+        </div>
+        <div class="agent-badge">
+          <span class="icon" aria-hidden="true">⚙️</span>
+          Developer · gemini-1.5-pro
+        </div>
+      </div>
+    </header>
+
+    <!-- ── Main input card ──────────────────────────────────────────────── -->
+    <section class="main-card" aria-label="Prompt input">
+      <label class="card-label" for="prompt-input">Your Request</label>
+
+      <textarea
+        id="prompt-input"
+        name="prompt"
+        rows="6"
+        placeholder="e.g. Build a REST API for a todo app with Express and SQLite, including CRUD endpoints and error handling…"
+        aria-label="Enter your task description"
+        spellcheck="true"
+      ></textarea>
+
+      <!-- Status bar (shown while loading) -->
+      <div id="status-bar" role="status" aria-live="polite">
+        <div class="spinner" id="spinner" aria-hidden="true"></div>
+        <div>
+          <div style="font-weight:600; margin-bottom:4px;">Agents are working…</div>
+          <div class="agent-steps">
+            <span class="step" id="step-architect">🏛 Architect planning</span>
+            <span style="color:var(--text-muted);font-size:11px;" aria-hidden="true">→</span>
+            <span class="step" id="step-developer">⚙️ Developer building</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit button -->
+      <button
+        id="submit-btn"
+        type="button"
+        aria-label="Submit prompt to agent team"
+      >
+        <span class="btn-icon" aria-hidden="true">✦</span>
+        Run Agents
+      </button>
+    </section>
+
+    <!-- ── Error box ─────────────────────────────────────────────────────── -->
+    <div id="error-box" role="alert" aria-live="assertive"></div>
+
+    <!-- ── Result section ────────────────────────────────────────────────── -->
+    <section id="result-section" aria-label="Agent output">
+      <div class="result-header">
+        <div class="result-title">
+          <span class="check" aria-hidden="true">✓</span>
+          Agent Team Output
+        </div>
+        <button
+          id="copy-btn"
+          class="copy-btn"
+          type="button"
+          aria-label="Copy developer output to clipboard"
+        >
+          Copy
+        </button>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs" role="tablist" aria-label="Output tabs">
+        <button
+          class="tab-btn active"
+          id="tab-developer"
+          role="tab"
+          aria-selected="true"
+          aria-controls="panel-developer"
+          data-panel="panel-developer"
+        >⚙️ Developer</button>
+        <button
+          class="tab-btn"
+          id="tab-architect"
+          role="tab"
+          aria-selected="false"
+          aria-controls="panel-architect"
+          data-panel="panel-architect"
+        >🏛 Architect</button>
+      </div>
+
+      <div class="output-card">
+        <div
+          id="panel-developer"
+          class="tab-panel active"
+          role="tabpanel"
+          aria-labelledby="tab-developer"
+        ></div>
+        <div
+          id="panel-architect"
+          class="tab-panel"
+          role="tabpanel"
+          aria-labelledby="tab-architect"
+        ></div>
+      </div>
+
+      <!-- Meta stats -->
+      <div id="meta-stats" aria-label="Run statistics"></div>
+    </section>
+
+    <!-- ── Footer ────────────────────────────────────────────────────────── -->
+    <footer class="footer">
+      Powered by
+      <a href="https://cloud.google.com/vertex-ai" target="_blank" rel="noopener">Google Vertex AI</a>
+      ·
+      <a href="https://www.npmjs.com/package/@jackchen_me/open-multi-agent" target="_blank" rel="noopener">open-multi-agent</a>
+    </footer>
+
+  </main>
+
+  <script>
+    // ── Configuration ────────────────────────────────────────────────────────
+    // Replace with your actual Cloud Run service URL after deployment.
+    const BACKEND_URL = 'YOUR_CLOUD_RUN_URL/api/generate'
+
+    // ── Element refs ─────────────────────────────────────────────────────────
+    const promptInput    = document.getElementById('prompt-input')
+    const submitBtn      = document.getElementById('submit-btn')
+    const statusBar      = document.getElementById('status-bar')
+    const spinner        = document.getElementById('spinner')
+    const stepArchitect  = document.getElementById('step-architect')
+    const stepDeveloper  = document.getElementById('step-developer')
+    const errorBox       = document.getElementById('error-box')
+    const resultSection  = document.getElementById('result-section')
+    const panelDeveloper = document.getElementById('panel-developer')
+    const panelArchitect = document.getElementById('panel-architect')
+    const metaStats      = document.getElementById('meta-stats')
+    const copyBtn        = document.getElementById('copy-btn')
+    const tabBtns        = document.querySelectorAll('.tab-btn')
+
+    // ── Tab switching ─────────────────────────────────────────────────────────
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetPanelId = btn.dataset.panel
+
+        tabBtns.forEach(b => {
+          b.classList.remove('active')
+          b.setAttribute('aria-selected', 'false')
+        })
+        btn.classList.add('active')
+        btn.setAttribute('aria-selected', 'true')
+
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'))
+        document.getElementById(targetPanelId).classList.add('active')
+      })
+    })
+
+    // ── Copy output ───────────────────────────────────────────────────────────
+    copyBtn.addEventListener('click', async () => {
+      const text = panelDeveloper.textContent ?? ''
+      try {
+        await navigator.clipboard.writeText(text)
+        copyBtn.textContent = 'Copied!'
+        setTimeout(() => { copyBtn.textContent = 'Copy' }, 2000)
+      } catch {
+        copyBtn.textContent = 'Failed'
+        setTimeout(() => { copyBtn.textContent = 'Copy' }, 2000)
+      }
+    })
+
+    // ── UI state helpers ──────────────────────────────────────────────────────
+    function setLoading(isLoading) {
+      promptInput.disabled = isLoading
+      submitBtn.disabled   = isLoading
+      spinner.style.display = isLoading ? 'block' : 'none'
+
+      if (isLoading) {
+        statusBar.classList.add('visible')
+        stepArchitect.className = 'step active'
+        stepDeveloper.className = 'step'
+      } else {
+        statusBar.classList.remove('visible')
+      }
+    }
+
+    function showError(message) {
+      errorBox.textContent = `⚠ Error: ${message}`
+      errorBox.classList.add('visible')
+    }
+
+    function hideError() {
+      errorBox.classList.remove('visible')
+      errorBox.textContent = ''
+    }
+
+    function showResults(data) {
+      panelDeveloper.textContent = data.output ?? '(No output from developer)'
+      panelArchitect.textContent = data.architect_output ?? '(No output from architect)'
+
+      // Render meta stats
+      const meta = data.meta ?? {}
+      const chips = []
+
+      if (meta.elapsed_ms) {
+        chips.push({ label: 'Time', value: `${(meta.elapsed_ms / 1000).toFixed(1)}s` })
+      }
+      if (meta.architect?.token_usage) {
+        const u = meta.architect.token_usage
+        chips.push({ label: 'Architect tokens', value: `${(u.input_tokens + u.output_tokens).toLocaleString()}` })
+      }
+      if (meta.developer?.token_usage) {
+        const u = meta.developer.token_usage
+        chips.push({ label: 'Developer tokens', value: `${(u.input_tokens + u.output_tokens).toLocaleString()}` })
+      }
+      if (meta.architect?.tool_calls != null) {
+        chips.push({ label: 'Tool calls', value: `${meta.architect.tool_calls + (meta.developer?.tool_calls ?? 0)}` })
+      }
+
+      metaStats.innerHTML = chips.map(c =>
+        `<div class="stat-chip"><span class="label">${c.label}</span>${c.value}</div>`
+      ).join('')
+
+      metaStats.classList.add('visible')
+      resultSection.classList.add('visible')
+
+      // Reset to developer tab
+      tabBtns.forEach(b => {
+        b.classList.toggle('active', b.dataset.panel === 'panel-developer')
+        b.setAttribute('aria-selected', b.dataset.panel === 'panel-developer' ? 'true' : 'false')
+      })
+      document.querySelectorAll('.tab-panel').forEach(p => {
+        p.classList.toggle('active', p.id === 'panel-developer')
+      })
+    }
+
+    // ── Submit handler ────────────────────────────────────────────────────────
+    async function handleSubmit() {
+      const prompt = promptInput.value.trim()
+      if (!prompt) {
+        promptInput.focus()
+        return
+      }
+
+      hideError()
+      resultSection.classList.remove('visible')
+      metaStats.classList.remove('visible')
+      setLoading(true)
+
+      try {
+        // Simulate architect phase progress after 3s
+        const archTimer = setTimeout(() => {
+          stepArchitect.className = 'step done'
+          stepDeveloper.className = 'step active'
+        }, 3000)
+
+        const response = await fetch(BACKEND_URL, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ prompt }),
+        })
+
+        clearTimeout(archTimer)
+
+        if (!response.ok) {
+          let detail = `HTTP ${response.status}`
+          try {
+            const errJson = await response.json()
+            detail = errJson.error ?? errJson.details ?? detail
+          } catch { /* ignore */ }
+          throw new Error(detail)
+        }
+
+        const data = await response.json()
+        showResults(data)
+      } catch (err) {
+        showError(err.message ?? 'Unknown error. Check the backend URL is correct.')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    submitBtn.addEventListener('click', handleSubmit)
+
+    // Allow Ctrl+Enter / Cmd+Enter to submit
+    promptInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault()
+        handleSubmit()
+      }
+    })
+  </script>
+</body>
+</html>

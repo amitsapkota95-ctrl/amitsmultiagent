@@ -4,3 +4,4 @@ dist/
 .DS_Store
 promo-*.md
 non-tech_*/
+vertex_api_api.json

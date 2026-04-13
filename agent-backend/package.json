@@ -1,0 +1,21 @@
+{
+  "name": "agent-backend",
+  "version": "1.0.0",
+  "description": "Multi-agent orchestration backend for Google Cloud Run",
+  "type": "module",
+  "main": "server.js",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "@google-cloud/vertexai": "^1.9.3",
+    "@jackchen_me/open-multi-agent": "^0.1.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "google-auth-library": "^9.15.1"
+  }
+}

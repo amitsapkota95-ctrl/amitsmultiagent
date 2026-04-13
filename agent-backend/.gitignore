@@ -1,0 +1,13 @@
+# Service account key (NEVER commit this)
+vertex_api_api.json
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Environment files
+.env
+.env.*
+
+# Build output
+dist/
